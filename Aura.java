@@ -1,22 +1,31 @@
-package org.popcraft.popcraft.commands;
+package org.popcraft.popcraft;
 
-import java.util.HashMap;
-import java.util.UUID;
-import org.bukkit.ChatColor;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.Bukkit;
 import org.bukkit.Effect;
+import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.event.Listener;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.popcraft.popcraft.utils.Message;
 
-public class Aura implements Listener, CommandExecutor {
+import java.util.HashMap;
+import java.util.UUID;
 
+import org.popcraft.popcraft.utils.*;
+
+public final class Aura extends JavaPlugin implements Listener, CommandExecutor {
+    
     public static HashMap<UUID, Effect> playeraura = new HashMap<UUID, Effect>();
+
+    @Override
+    public void onEnable() {
+	Bukkit.getServer().getPluginManager().registerEvents(this, this);
+    }
 
     @Override
     public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
@@ -27,21 +36,12 @@ public class Aura implements Listener, CommandExecutor {
 		    playeraura.remove(player.getUniqueId());
 		    Message.normal(player, "Cleared aura.");
 		} else {
-		    Message.usage(player, "aura <clear/list/type>");
+		    Message.usage(player, "aura <list/type>");
 		}
 	    } else if (args.length == 1) {
-		if (args[0].equalsIgnoreCase("clear")) {
-		    if (playeraura.containsKey(player.getUniqueId())) {
-			playeraura.remove(player.getUniqueId());
-			Message.normal(player, "Cleared aura.");
-		    } else {
-			Message.error(player, "You don't have an aura enabled!");
-		    }
-		} else if (args[0].equalsIgnoreCase("list")) {
+		if (args[0].equalsIgnoreCase("list")) {
 		    Message.normal(player, "Auras: " + ChatColor.RESET + "clouds, flames, magic, smoke, sparks");
-		} else if (args[0].equalsIgnoreCase("type")) {
-		    Message.normal(player, "Auras: " + ChatColor.RESET + "clouds, flames, magic, smoke, sparks");
-		} else if (args[0].equals("sparks")) {
+		}  else if (args[0].equals("sparks")) {
 		    playeraura.put(player.getUniqueId(), Effect.FIREWORKS_SPARK);
 		    Message.normal(player, "Aura effect set to " + ChatColor.RED + "sparks" + ChatColor.GOLD + ".");
 		} else if (args[0].equals("smoke")) {
@@ -57,10 +57,10 @@ public class Aura implements Listener, CommandExecutor {
 		    playeraura.put(player.getUniqueId(), Effect.DRAGON_BREATH);
 		    Message.normal(player, "Aura effect set to " + ChatColor.RED + "magic" + ChatColor.GOLD + ".");
 		} else {
-		    Message.usage(player, "aura <clear/list/type>");
+		    Message.usage(player, "aura <list/type>");
 		}
 	    } else {
-		Message.usage(player, "aura <clear/list/type>");
+		Message.usage(player, "aura <list/type>");
 	    }
 	}
 	return true;
